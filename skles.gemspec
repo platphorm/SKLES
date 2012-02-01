@@ -35,7 +35,7 @@ Gem::Specification.new do |s|
   ]
   s.homepage = %q{http://github.com/RISCfuture/skles}
   s.require_paths = [%q{lib}]
-  s.required_ruby_version = Gem::Requirement.new(">= 1.9")
+  s.required_ruby_version = Gem::Requirement.new(">= 1.8.7")
   s.rubygems_version = %q{1.8.5}
   s.summary = %q{Ruby interface for SKLES (StrongKey Light Encryption System) boxes}
 

@@ -21,28 +21,28 @@ describe StrongKeyLite do
 
   describe "#call" do
     before :each do
-      @client = mock('Savon::Client', request: nil)
+      @client = mock('Savon::Client', :request => nil)
       Savon::Client.stub!(:new).and_return(@client)
     end
     
     before :each do
-      @client = mock('Savon::Client', request: nil, wsdl: mock('Savon::WSDL', soap_actions: [ :ping ]))
+      @client = mock('Savon::Client', :request => nil, :wsdl => mock('Savon::WSDL', :soap_actions => [ :ping ]))
       Savon::Client.stub!(:new).and_return(@client)
       @skles = StrongKeyLite.new('http://test.host', 1)
 
-      @response = mock('Soap::Response', :soap_fault? => false, :http_error? => false, soap_fault: nil, http_error: nil, to_hash: {})
-      @response.stub(:to_hash).and_return(ping_response: { return: '' })
+      @response = mock('Soap::Response', :soap_fault? => false, :http_error? => false, :soap_fault => nil, :http_error => nil, :to_hash => {})
+      @response.stub(:to_hash).and_return(:ping_response => { :return => '' })
     end
 
     it "should raise an error if no user has been assigned to the action" do
-      -> { @skles.ping }.should raise_error(/No user/)
+      lambda { @skles.ping }.should raise_error(/No user/)
     end
 
     it "should invoke the proper action on the Savon client and use the appropriate user" do
       @skles.add_user('login', 'password', :ping)
       
       soap = mock('Savon::Request')
-      soap.should_receive(:body=).once.with({ did: 1, username: 'login', password: 'password' })
+      soap.should_receive(:body=).once.with({ :did => 1, :username => 'login', :password => 'password' })
       @client.should_receive(:request).once.with(:wsdl, :ping).and_yield(soap).and_return(@response)
       @skles.ping
     end
@@ -51,7 +51,7 @@ describe StrongKeyLite do
       @skles.add_user('all', 'password', :all)
 
       soap = mock('Savon::Request')
-      soap.should_receive(:body=).once.with({ did: 1, username: 'all', password: 'password' })
+      soap.should_receive(:body=).once.with({ :did => 1, :username => 'all', :password => 'password' })
       @client.should_receive(:request).once.with(:wsdl, :ping).and_yield(soap).and_return(@response)
       @skles.ping
     end
@@ -61,7 +61,7 @@ describe StrongKeyLite do
       @skles.add_user('ping', 'password', :ping)
 
       soap = mock('Savon::Request')
-      soap.should_receive(:body=).once.with({ did: 1, username: 'ping', password: 'password' })
+      soap.should_receive(:body=).once.with({ :did => 1, :username => 'ping', :password => 'password' })
       @client.should_receive(:request).once.with(:wsdl, :ping).and_yield(soap).and_return(@response)
       @skles.ping
     end
@@ -74,7 +74,7 @@ describe StrongKeyLite do
       @response.stub!(:http_error?).and_return(true)
       @response.stub!(:http_error).and_return("404 Not Found")
       
-      -> { @skles.ping }.should raise_error(StrongKeyLite::HTTPError)
+      lambda { @skles.ping }.should raise_error(StrongKeyLite::HTTPError)
     end
     
     it "should raise a SOAPError if a SOAP fault occurs" do
@@ -85,14 +85,14 @@ describe StrongKeyLite do
       @response.stub!(:soap_fault?).and_return(true)
       @response.stub!(:soap_fault).and_return("Not enough XML")
       
-      -> { @skles.ping }.should raise_error(StrongKeyLite::SOAPError)
+      lambda { @skles.ping }.should raise_error(StrongKeyLite::SOAPError)
     end
   end
 
   describe "#actions" do
     before :each do
       @wsdl = mock('Savon::WSDL')
-      @client = mock('Savon::Client', request: nil, wsdl: @wsdl)
+      @client = mock('Savon::Client', :request => nil, :wsdl => @wsdl)
       Savon::Client.stub!(:new).and_return(@client)
       @skles = StrongKeyLite.new('http://test.host', 1)
     end
