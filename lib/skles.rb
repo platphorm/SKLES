@@ -167,7 +167,7 @@ class StrongKeyLite
     def initialize(fault, response)
       super
       if code_match = fault.to_s.match(/SKL-ERR-(\d+)/) then
-        @code = code_match[1].try(:to_i)
+        @code = code_match[1].respond_to?(:to_i) ? code_match[1].to_i : code_match[1]
       end
     end
   end
