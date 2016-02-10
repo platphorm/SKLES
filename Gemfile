@@ -1,7 +1,6 @@
 source :rubygems
 
-gem 'httpclient' # http adapter for savon
-gem 'savon', '>= 0.9'
+gem 'savon'
 
 group :development do
   gem 'jeweler'

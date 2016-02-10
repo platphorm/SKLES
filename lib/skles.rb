@@ -1,11 +1,5 @@
 require 'savon'
-require File.dirname(__FILE__) + '/skles_extensions'
 require File.dirname(__FILE__) + '/skles_api'
-
-Savon.configure do |config|
-  config.log = false # can't have plaintext CC #s being logged
-  config.raise_errors = false # We have our own error raising
-end
 
 # Client for the StrongKey Lite Encryption System (SKLES) SOAP-based API. An
 # instance of this API interfaces with your StrongKey Lite box to encrypt and
@@ -50,11 +44,12 @@ class StrongKeyLite
   #   StrongKeyLite.new(url, domain) { |http| http.read_timeout = 60 }
 
   def initialize(service_url, domain_id, options={})
-    @client = Savon::Client.new do |wsdl, http, wsse|
-      wsdl.document = "#{service_url}/strongkeyliteWAR/EncryptionService?wsdl"
-      yield http if block_given?
-    end
-    options[:http].each { |key, val| @client.request.http.send :"#{key}=", val } if options[:http].kind_of?(Hash)
+    @client = Savon::Client.new(
+      wsdl: "#{service_url}/strongkeyliteWAR/EncryptionService?wsdl",
+      log: false,
+      raise_errors: false
+    )
+    @client.ssl_verify_mode options[:ssl_verify_mode] if options[:ssl_verify_mode]
 
     self.domain_id = domain_id
 
@@ -109,7 +104,7 @@ class StrongKeyLite
   # @return [Array<Symbol>] A list of actions that the API can perform.
 
   def actions
-    @actions ||= @client.wsdl.soap_actions
+    @actions ||= @client.operations
   end
 
   # Makes an API call and returns the result as a hash. This method is the basis
@@ -129,21 +124,13 @@ class StrongKeyLite
     raise "No user has been assigned to action #{meth.inspect}" unless login
     password = @users[login]
     
-    response = @client.request(:wsdl, meth) { |soap| soap.body = { did: domain_id, username: login, password: password }.merge(options) }
+    response = @client.call(meth, message: { did: domain_id, username: login, password: password }.merge(options))
     raise SOAPError.new(response.soap_fault, response) if response.soap_fault?
     raise HTTPError.new(response.http_error, response) if response.http_error?
 
-    return response.to_hash
+    return response.hash
   end
   
-  # Sets the HTTPI adapter to use for Savon. By default it's @:net_http@.
-  #
-  # @param [Symbol] adapter The HTTPI adapter to use.
-  
-  def self.http_adapter=(adapter)
-    Savon.http_adapter = adapter
-  end
-
   # Superclass of all {StrongKeyLite} exceptions.
 
   class ResponseError < StandardError
