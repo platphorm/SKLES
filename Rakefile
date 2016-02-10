@@ -13,11 +13,11 @@ require 'jeweler'
 Jeweler::Tasks.new do |gem|
   gem.name = "skles"
   gem.summary = %Q{Ruby interface for SKLES (StrongKey Light Encryption System) boxes}
-  gem.description = %Q{A Ruby wrapper around the StrongKey Lite SOAP client API (Ruby < 1.9 compat fork).}
+  gem.description = %Q{A Ruby wrapper around the StrongKey Lite SOAP client API.}
   gem.email = "git@timothymorgan.info"
-  gem.homepage = "http://github.com/isaacfeliu/skles"
+  gem.homepage = "http://github.com/RISCfuture/skles"
   gem.authors = [ "Tim Morgan" ]
-  gem.required_ruby_version = '>= 1.8'
+  gem.required_ruby_version = '>= 1.9'
 end
 Jeweler::RubygemsDotOrgTasks.new
 
@@ -36,4 +36,4 @@ YARD::Rake::YardocTask.new('doc') do |doc|
   doc.files = [ 'lib/**/*', 'README.textile' ]
 end
 
-task(:default => :spec)
+task(default: :spec)

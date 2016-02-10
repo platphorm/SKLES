@@ -129,7 +129,7 @@ class StrongKeyLite
     raise "No user has been assigned to action #{meth.inspect}" unless login
     password = @users[login]
     
-    response = @client.request(:wsdl, meth) { |soap| soap.body = { :did => domain_id, :username => login, :password => password }.merge(options) }
+    response = @client.request(:wsdl, meth) { |soap| soap.body = { did: domain_id, username: login, password: password }.merge(options) }
     raise SOAPError.new(response.soap_fault, response) if response.soap_fault?
     raise HTTPError.new(response.http_error, response) if response.http_error?
 

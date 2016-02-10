@@ -75,7 +75,7 @@ class StrongKeyLite
     #   server.
 
     def encrypt(plaintext)
-      call(:encrypt, :plaintext => plaintext)[:encrypt_response][:return]
+      call(:encrypt, plaintext: plaintext)[:encrypt_response][:return]
     end
 
     # Retrieves a credit card number (or any other encrypted content) from the
@@ -85,7 +85,7 @@ class StrongKeyLite
     # @return [String] The text that was encrypted.
 
     def decrypt(token)
-      call(:decrypt, :token => token)[:decrypt_response][:return]
+      call(:decrypt, token: token)[:decrypt_response][:return]
     end
 
     # Removes a credit card number (or any other encrypted content) from the
@@ -96,7 +96,7 @@ class StrongKeyLite
     #   successfully deleted.
 
     def delete(token)
-      call(:delete, :token => token)[:delete_response][:return]
+      call(:delete, token: token)[:delete_response][:return]
     end
 
     # Determines if a credit card number (or any other plain text content) is
@@ -107,7 +107,7 @@ class StrongKeyLite
     #   such text is stored in the vault.
 
     def search(plaintext)
-      call(:search, :plaintext => plaintext)[:search_response][:return]
+      call(:search, plaintext: plaintext)[:search_response][:return]
     end
   end
 end
